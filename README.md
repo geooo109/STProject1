@@ -2,9 +2,9 @@
 Software technology course ,first assignment
 
 
-Authors
-Georgios Michas    ~sdi1400109
-Dimitrios Halatsis ~sdi1400219
+Authors:
+Georgios Michas    ~sdi1400109\\ 
+Dimitrios Halatsis ~sdi1400219\\
 
 
 Status : Ongoing
