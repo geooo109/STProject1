@@ -6,6 +6,19 @@
 
 
 
+/*
+ * @Class methods
+ * createBranchFile() : Initialises a file that contains the 
+ * author's percentages for a specific branch
+ * branchFile_insert() : Inserts an entry described above
+ * branchFile_close() : finishes the html and closes the file 
+ * insert_branch2()   : Inserts a file at the Branch - Perc - Link table
+ * insert_author() : Inserts an author at the Author - Perc Table
+ * insert_branc()  : Inserts a branch at the Branch - Start - Last
+ *  - link to specific branch table 
+ * NEED to have created respective HFile to work properly!
+ */
+ 
 import java.util.*;
 import java.io.*;
 
@@ -22,7 +35,7 @@ public class MFile {
  * name         : name of the file formulated
  * branch_table : used for printing the meta data (avg , etc) first
  * file         : the "file descriptor"
- *
+ * 
  */
 
 	String name;
@@ -89,7 +102,7 @@ public class MFile {
 		return 0;
 	}
 
-	public int BranchFile_insert(String name, float perc)
+	public int branchFile_insert(String name, float perc)
 	{
 		if (this.bfile == null)
 			return -1;
@@ -104,7 +117,7 @@ public class MFile {
 		return 0;
 	}
 
-	public int BranchFile_close()
+	public int branchFile_close()
 	{
 		if (bfile == null)
 			return -1;
@@ -171,6 +184,43 @@ public class MFile {
 	public int set_totalCommits(int val)
 	{	this.totalCommits = val;
 		return 0;}
+
+	/*finalizing function */
+	public int end()
+	{
+		Charset charset = Charset.forName("US-ASCII");
+		try {
+			this.file = Files.newBufferedWriter(Paths.get(name), charset);
+			//TODO , add the rest of the info
+			this.file.write(html_initialiser);
+			this.file.write("<h1>Branches Info</h1>");
+			for (int i=0; i < branch_table.size(); i++)
+				this.file.write(branch_table.get(i));
+			this.file.write("</table>");
+			this.file.write("<h1>Branches Percentage</h1>");
+			for (int i=0; i < branch2_table.size(); i++)
+				this.file.write(branch2_table.get(i));
+			this.file.write("</table>");
+			this.file.write("<h1>Authors Percentage</h1>");
+			for (int i=0; i < author_table.size(); i++)
+				this.file.write(author_table.get(i));
+			this.file.write("</table>");
+			/*Write every table*/
+			this.file.close();
+		} catch(IOException x) {
+			System.err.format("IOException: %s%n", x);
+			return -1;
+
+		}
+		return 0;
+
+	}
+
+	/*Deletes all the files*/
+	public int cleanup()
+	{
+		return 0;
+	}
 
 	private static final String html_initialiser = 
 "<!DOCTYPE html><html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"mystyle.css\"></head>";
