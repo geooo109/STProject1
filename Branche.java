@@ -3,9 +3,37 @@ import java.io.*;
 
 public class Branche{
 	private int total;
+	private int total_commits;
 	
 	public Branche(){
 		total = 0;
+		total_commits = 0;
+	}
+
+	public void total_commits_found(String inpath){
+		if(total_commits > 0)
+			return;
+
+		String command = "git -C " + inpath + " rev-list --count --all";
+		try{
+	      	Process proc = Runtime.getRuntime().exec(command);
+	      	
+	      	/*to read the out put of gitcommand*/
+	    	BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+			/*BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));*/ 
+			String s = stdInput.readLine();
+			total_commits = Integer.parseInt(s);
+			System.out.println("assssssssssssssssssssssssssssssssssssss");
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+		return;
+	}
+
+	public void prt_total_commits(String inpath){
+		total_commits_found(inpath);
+		System.out.println("Total commits ->" + total_commits);
 	}
 
 	public void show_branches(String inpath){
@@ -67,7 +95,7 @@ public class Branche{
 
 	}
 
-	
+	/*for d*/
 	public void show_commits(String inpath,String outpath){
 		String command = "git -C " + inpath + " log";
 		try{
@@ -89,7 +117,6 @@ public class Branche{
 					comm = s.substring(0, s.indexOf(" "));
 					
 					if(comm.equals("commit") == true){
-						
 						/*GET COMMIT HERE*/
 						comm = s.substring(comm.length()+1);
 						vector[0] = comm;
@@ -207,5 +234,35 @@ public class Branche{
 		catch(IOException e){
 	    	e.printStackTrace();
 		}
+	}
+
+	public void show_commit_queries(String inpath){
+		/*here are the total commtis in a var of the class*/
+		try{
+			CStats h = new CStats();
+			String command = "git -C " + inpath + " rev-list --count --all";
+	      	Process proc = Runtime.getRuntime().exec(command);
+	      	
+	      	/*to read the out put of gitcommand*/
+	    	BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+			/*BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));*/ 
+			String s = stdInput.readLine();
+			total_commits = Integer.parseInt(s);
+			System.out.println(total_commits);
+			
+			command =  "git -C " + inpath + " shortlog -s";
+			System.out.println(command);
+	      	Process proc2 = Runtime.getRuntime().exec(command);
+	      	/*to read the out put of gitcommand*/
+	    	BufferedReader stdInput2 = new BufferedReader(new InputStreamReader(proc2.getInputStream()));	
+	    	String s2 = null;
+	    	while ((s2 = stdInput.readLine()) != null) {
+	    		if(s2.isEmpty() == false)
+	    			System.out.println(s);
+	   		}
+	    }
+	    catch(IOException e){
+	    	e.printStackTrace();
+	    }
 	}
 }
