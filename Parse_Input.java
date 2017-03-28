@@ -102,5 +102,13 @@ public class Parse_Input{
         /*e*/
         /*print gits*/
         bra.show_commits(inpath,outpath);
+
+        /*fro branches d*/
+        bra.show_branches(inpath);
+
+        /*for g*/
+        bra.show_lines_queries(b.get_comms(),inpath);
+ 		//bra.ptr_total_commits(inpath);
+ 		bra.show_commit_queries(inpath);
     }
 }
