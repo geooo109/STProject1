@@ -41,7 +41,7 @@ public class Btc{
 
 	public void set_brs_tags_coms(String inpath){
 		/*this command is for breanches*/
-		String command = "git -C " + inpath +  " branch -a"; 
+		String command = "git -C " + inpath +  " branch -r"; 
 		try{
 	      	Process proc = Runtime.getRuntime().exec(command);
 	      	
@@ -62,7 +62,7 @@ public class Btc{
 		}
 
 		/*for the master bracneh --*/
-		brs -= 2;
+		//brs--;
 
 		/*now this is for the tags*/
 		command = "git -C " + inpath +  " tag"; 
@@ -108,7 +108,9 @@ public class Btc{
 		}
 	}
 
-	public void print_btc(){
-		System.out.println("Total Branches = " + brs + " ,Total Tags = " + tags + " ,Total Commiters = " + comms);
+	public void print_btc(MFile mf){
+		mf.set_totalBranches(brs);
+		mf.set_totalTags(tags);
+		mf.set_totalCommitters(comms)
 	}
 }

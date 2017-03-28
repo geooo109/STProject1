@@ -36,12 +36,12 @@ public class Branche{
 		System.out.println("Total commits ->" + total_commits);
 	}
 
-	public void show_branches(String inpath){
+	public void show_branches(String inpath, MFile mf){
 		String comm = null;
 		int flag = 0;
 		int count;
 		String commit = null;
-		String [] vector = new String [3];
+		String [] array = new String [4];
 		String command  = "git -C " + inpath + " branch -r";
 		try{
 	      	Process proc = Runtime.getRuntime().exec(command);
@@ -51,7 +51,7 @@ public class Branche{
 			/*BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));*/ 
 			String s = null;
 			while ((s = stdInput.readLine()) != null) {
-				vector[0] = s;
+				array[0] = s;
 				count = 0;
 				command = "git -C " + inpath + " log  --pretty=oneline " + s; 
 		    	Process proc2 = Runtime.getRuntime().exec(command);
@@ -73,16 +73,18 @@ public class Branche{
 						if(s3.startsWith("Date:") == true)
 							last = s3;
 						if(count == 0 && s3.startsWith("Date:") == true){
-							vector[2] =  s3.substring(comm.length() + 3);
+							array[2] =  s3.substring(comm.length() + 3);
 							count = 1;
 						}
 					}
 				}
 				comm = "Date:";
 				if(last != null)
-					vector[1] =  last.substring(comm.length() + 3);
-				if(vector[1] !=null)
-					System.out.println(vector[0] +","+ vector[1] +","+ vector[2]);
+					array[1] =  last.substring(comm.length() + 3);
+				if(array[1] !=null) {
+					array[3] = new String(array[0]+"tab.html");
+					mf.insert_branch(array[0], array[1], array[2], array[3]);
+				}
 			}
 
 			/*while ((s = stdError.readLine()) != null) {
@@ -198,7 +200,7 @@ public class Branche{
 	}
 
 
-	public void show_lines_queries(int total_comms,String inpath){
+	public void show_lines_queries(int total_comms,String inpath, MFile mf){
 		String comm = null;
 		double mo = 0.0;
 		total = 0;
@@ -229,7 +231,7 @@ public class Branche{
 				}
 	    	}
 	    	mo = ((double)total/total_comms);
-	    	System.out.printf("Changes->%.2f\n",mo);
+	    	mf.set_avgLinesChanged(mo);
 	    }
 		catch(IOException e){
 	    	e.printStackTrace();

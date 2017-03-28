@@ -2,6 +2,8 @@ import java.util.*;
 import java.io.*;
 //package git;
 
+
+
 public class Parse_Input{
 
 	/*this functions is to COUNT ALL THE FILES */
@@ -79,6 +81,9 @@ public class Parse_Input{
         System.out.println(inpath);
         System.out.println(outpath);
 
+        MFile mf = new MFile(outpath);
+
+
         /*create instance of class*/
         Parse_Input P = new Parse_Input();
         Btc b = new Btc();
@@ -87,27 +92,30 @@ public class Parse_Input{
         /*a*/
         /*here is to count the files in the repository*/
         int count = P.get_total_files(inpath);
+        mf.set_totalFiles(count);
+
         System.out.println("Total files  = " + count);
 
         /*b*/
         /*THE tota lines of all progs in the repository*/
         long total_lines = P.get_total_lines(inpath);
+        mf.set_totalLines(count);
         System.out.println("Total lines of all files is = " + total_lines);
 
         /*c*/
         /*get all the other*/
         b.set_brs_tags_coms(inpath);
-        b.print_btc();
+        b.print_btc(mf);
 
         /*e*/
         /*print gits*/
         bra.show_commits(inpath,outpath);
 
         /*fro branches d*/
-        bra.show_branches(inpath);
+        bra.show_branches(inpath, mf);
 
         /*for g*/
-        bra.show_lines_queries(b.get_comms(),inpath);
+        bra.show_lines_queries(b.get_comms(),inpath,mf);
  		//bra.ptr_total_commits(inpath);
  		bra.show_commit_queries(inpath);
     }
