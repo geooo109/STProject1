@@ -113,7 +113,7 @@ public class Branche{
 			String finish_comm = null;
 			String temp_s = null;
 			String comp_s = null;
-			HFile hf = new HFile(outpath);
+			//HFile hf = new HFile(outpath);
 			while ((s = stdInput.readLine()) != null) {
 				if(s.isEmpty() == false){
 					comm = s.substring(0, s.indexOf(" "));
@@ -166,7 +166,7 @@ public class Branche{
 											System.out.println(vector[3]);
 											System.out.println("------------------------END-----------------------");
 											*/
-											hf.insert(vector);
+											//hf.insert(vector);
 											break;
 										}
 										if(s2.isEmpty() == true)
@@ -202,7 +202,7 @@ public class Branche{
 
 	public void show_lines_queries(int total_comms,String inpath, MFile mf){
 		String comm = null;
-		double mo = 0.0;
+		float mo = (float)0.0;
 		total = 0;
 		String command = "git -C " + inpath + " log";
 		try{
@@ -230,7 +230,7 @@ public class Branche{
 					}
 				}
 	    	}
-	    	mo = ((double)total/total_comms);
+	    	mo = ((float)total/total_comms);
 	    	mf.set_avgLinesChanged(mo);
 	    }
 		catch(IOException e){
@@ -238,7 +238,7 @@ public class Branche{
 		}
 	}
 
-	public void show_commit_queries(String inpath){
+	public void show_commit_queries(String inpath, MFile mf){
 		/*here are the total commtis in a var of the class*/
 		try{
 			CStats h = new CStats();
@@ -266,6 +266,7 @@ public class Branche{
 				}
 			}
 			System.out.println("Total commits ->"+total_commits);
+			mf.set_totalCommits(total_commits);
 			/*---------------------E2------------------------*/
 			command =  "git -C " + inpath + " log";
 	      	Process proc2 = Runtime.getRuntime().exec(command);
@@ -283,11 +284,11 @@ public class Branche{
 					}
 				}
 	   		}
-	   		/*Set<String> set = h.getNames() ;
+	   		Set<String> set = h.getNames() ;
 			for (String s3 : set) {
 				float perc = h.percen(s3);
-				System.out.println(s3 +" "+ perc*100+"%");
-			}*/
+				mf.insert_author(s3, perc*100);
+			}
 			/*------------------------E3----------------------*/
 			command  = "git -C " + inpath + " branch -r";
 			CStats h2 = new CStats(); 
@@ -312,8 +313,9 @@ public class Branche{
 				}
 				/*remove the space*/
 				s4 = s4.replace(" ","");
-				/*TODO ------------------------------>*/double perc3 = (double)((count_commits/total_commits)*100.00);
-				System.out.println(s4 + " total commits -> " + perc3 + "%");
+				float perc3 = (((float)count_commits/total_commits)*100);
+				mf.insert_branch2(s4,perc3);
+				
 				count_commits = 0;
 			/*---------------------E4-----------------------------*/
 				command =  "git -C " + inpath + " log";
@@ -333,11 +335,16 @@ public class Branche{
 					}
 		   		}
 		   		System.out.println("------------------FOR THE BRNACH --------------------> "+ s4);
-		   		Set<String> set2 = h2.getNames() ;
+		   		Set<String> set2 = h2.getNames();
+		   		System.err.println(s4);
+				System.err.println(s4);
+		   		mf.createBranchFile(s4);
 				for (String s7 : set2) {
 					float perc2 = h2.percen(s7);
+					mf.branchFile_insert(s7, perc2);
 					System.out.println(s7 +" "+ perc2*100+"%");
 				}
+				mf.branchFile_close();
 			}
 	    }
 	    catch(IOException e){
