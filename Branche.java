@@ -77,6 +77,7 @@ public class Branche{
 							count = 1;
 						}
 					}
+					stdInput3.close();
 				}
 				comm = "Date:";
 				if(last != null)
@@ -90,6 +91,7 @@ public class Branche{
 			/*while ((s = stdError.readLine()) != null) {
 			    System.out.println(s);
 			}*/
+			stdInput.close();
 		}
 		catch(IOException e){
   			e.printStackTrace();
@@ -250,11 +252,13 @@ public class Branche{
 	    					if((s2.startsWith("+") == true) || (s2.startsWith("-") == true))
 	    						total++;
 	    				}
+	    				stdInput2.close();
 					}
 				}
 	    	}
 	    	mo = ((float)total/total_comms);
 	    	mf.set_avgLinesChanged(mo);
+	    	stdInput.close();
 	    }
 		catch(IOException e){
 	    	e.printStackTrace();
@@ -285,7 +289,9 @@ public class Branche{
 						total_commits++;
 					}
 				}
+				stdInput8.close();
 			}
+			stdInput.close();
 			System.out.println("Total commits ->"+total_commits);
 			mf.set_totalCommits(total_commits);
 			/*---------------------E2------------------------*/
@@ -336,7 +342,7 @@ public class Branche{
 				s4 = s4.replace(" ","");
 				float perc3 = (((float)count_commits/total_commits)*(float)100.0);
 				mf.insert_branch2(s4,perc3);
-				
+				stdInput4.close();
 				count_commits = 0;
 			/*---------------------E4-----------------------------*/
 				command =  "git -C " + inpath + " log";
@@ -371,6 +377,8 @@ public class Branche{
 					mf.branchFile_insert(s7, perc2*100);
 					System.out.println(s7 +" "+ perc2*(float)100.0+"%");
 				}
+				stdInput2.close();
+				stdInput3.close();
 				mf.branchFile_close();
 			}
 	    }
