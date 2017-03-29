@@ -22,7 +22,7 @@ public class CStats {
 	{
 		Integer v = hashtable.get(name);
 		if (v == null)
-			v = new Integer(-1);
+			v = new Integer(0);
 		v += 1;
 
 		hashtable.put(name, v);
@@ -35,6 +35,11 @@ public class CStats {
 		return hashtable.keySet();
 	}
 
+	public int sum(String name)
+	{
+		Integer v = hashtable.get(name);
+		return v;
+	}
 	public float percen(String name)
 	{
 		Integer v = hashtable.get(name);
