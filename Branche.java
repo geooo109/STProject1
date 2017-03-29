@@ -9,12 +9,39 @@ public class Branche{
 		total = 0;
 		total_commits = 0;
 	}
-	public void show_branches(String inpath){
+
+	public void total_commits_found(String inpath){
+		if(total_commits > 0)
+			return;
+
+		String command = "git -C " + inpath + " rev-list --count --all";
+		try{
+	      	Process proc = Runtime.getRuntime().exec(command);
+	      	
+	      	/*to read the out put of gitcommand*/
+	    	BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+			/*BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));*/ 
+			String s = stdInput.readLine();
+			total_commits = Integer.parseInt(s);
+			System.out.println("assssssssssssssssssssssssssssssssssssss");
+		}
+		catch(IOException e){
+			e.printStackTrace();
+		}
+		return;
+	}
+
+	public void prt_total_commits(String inpath){
+		total_commits_found(inpath);
+		System.out.println("Total commits ->" + total_commits);
+	}
+
+	public void show_branches(String inpath, MFile mf){
 		String comm = null;
 		int flag = 0;
 		int count;
 		String commit = null;
-		String [] vector = new String [3];
+		String [] array = new String [4];
 		String command  = "git -C " + inpath + " branch -r";
 		try{
 	      	Process proc = Runtime.getRuntime().exec(command);
@@ -24,14 +51,14 @@ public class Branche{
 			/*BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));*/ 
 			String s = null;
 			while ((s = stdInput.readLine()) != null) {
-				vector[0] = s;
+				array[0] = s;
 				count = 0;
 				command = "git -C " + inpath + " log  --pretty=oneline " + s; 
 		    	Process proc2 = Runtime.getRuntime().exec(command);
 	      	
 	      		/*to read the out put of gitcommand*/
 	    		BufferedReader stdInput2 = new BufferedReader(new InputStreamReader(proc2.getInputStream()));
-	    		BufferedReader temp;
+	    		BufferedReader temp =  new BufferedReader(new InputStreamReader(proc2.getInputStream()));
 				/*BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));*/ 
 				String s2 = null;
 				String last = null;
@@ -46,24 +73,23 @@ public class Branche{
 						if(s3.startsWith("Date:") == true)
 							last = s3;
 						if(count == 0 && s3.startsWith("Date:") == true){
-							vector[2] =  s3.substring(comm.length() + 3);
+							array[2] =  s3.substring(comm.length() + 3);
 							count = 1;
 						}
 					}
-					stdInput3.close();
 				}
 				comm = "Date:";
 				if(last != null)
-					vector[1] =  last.substring(comm.length() + 3);
-				if(vector[1] !=null)
-					System.out.println(vector[0] +","+ vector[1] +","+ vector[2]);
-				stdInput2.close();
+					array[1] =  last.substring(comm.length() + 3);
+				if(array[1] !=null) {
+					array[3] = new String(array[0]+"tab.html");
+					mf.insert_branch(array[0], array[1], array[2], array[3].replace('/', '-'));
+				}
 			}
 
 			/*while ((s = stdError.readLine()) != null) {
 			    System.out.println(s);
 			}*/
-			stdInput.close();
 		}
 		catch(IOException e){
   			e.printStackTrace();
@@ -73,24 +99,25 @@ public class Branche{
 
 	/*for d*/
 	public void show_commits(String inpath,String outpath){
-		System.out.println("SHOW COMMITS STARTS");
+		//System.out.println("SHOW COMMITS STARTS");
 		String command  = "git -C " + inpath + " branch -r";
 		try{
-			HFile hf = new HFile(outpath);
 			Process procf = Runtime.getRuntime().exec(command);
 			BufferedReader stdInputf = new BufferedReader(new InputStreamReader(procf.getInputStream()));
 	      	String sf = null;
 	      	sf = stdInputf.readLine();
 	     	while((sf = stdInputf.readLine()) != null){
 	      		command = "git -C " + inpath + " log" + sf;
-	      		System.out.println(command);
+	      		sf = sf.substring(2);
+	      		HFile hf = new HFile(sf.replace('/','-')+"tab.html", sf, outpath);
+	      		//System.out.println(command);
 	      		Process proc = Runtime.getRuntime().exec(command);
 		      	/*to read the out put of gitcommand*/
 		    	BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 				/*BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));*/ 
 				String s = null; 
 				String comm = null;
-				String[] vector = new String[4];
+				String[] vector = new String[5];
 				vector[1] = null;
 				String finish_comm = null;
 				String temp_s = null;
@@ -103,6 +130,7 @@ public class Branche{
 							/*GET COMMIT HERE*/
 							comm = s.substring(comm.length()+1);
 							vector[0] = comm;
+							vector[4] = null;
 							/*NOW PRIN ALL THE DATA FOR THE INPUT*/
 							command = "git -C " + inpath +  " show --summary " + comm; 
 							String comm2 = null;
@@ -139,13 +167,27 @@ public class Branche{
 											tempInput2 = stdInput2;
 											temp_s = tempInput2.readLine();
 											if(temp_s == null){
-												System.out.println("------------------------START---------------------");
-												System.out.println("------------------>" + vector[0] + "<----------------------");
-												System.out.println(vector[1]);
-												System.out.println(vector[2]);
-												System.out.println(vector[3]);
-												System.out.println("------------------------END-----------------------");
-												
+												/*HERE IS THE CHANGE FOR THE TAG*/
+												/*System.out.println(vector[0]);
+												command = "git -C " + inpath + " tag --contains " + vector[0];
+												Process proc3 = Runtime.getRuntime().exec(command);
+												BufferedReader stdInput3 = new BufferedReader(new InputStreamReader(proc3.getInputStream()));
+												String s3 = null;
+												while((s3 = stdInput3.readLine()) != null){
+													if(vector[4] == null)
+														vector[4] = s3;
+													else{
+														vector[4] = vector[4] + "," + s3;
+													}
+												}*/
+											//	System.out.println("------------------------START---------------------");
+											//	System.out.println("------------------>" + vector[0] + "<----------------------");
+											//	System.out.println(vector[1]);
+											//	System.out.println(vector[2]);
+											//	System.out.println(vector[3]);
+											//	System.out.println("------------------------END-----------------------");
+												//if(vector[4] != null)
+												//	System.out.println(vector[4]);
 												hf.insert(vector);
 												break;
 											}
@@ -159,6 +201,7 @@ public class Branche{
 												vector[1] = vector[1] + "\n" + s2;
 											}
 										}
+										
 									}
 								}
 								stdInput2.close();
@@ -170,6 +213,7 @@ public class Branche{
 						}
 					}
 				}
+				hf.finish();
 			}
 			stdInputf.close();
 		}
@@ -179,9 +223,9 @@ public class Branche{
 	}
 
 
-	public void show_lines_queries(int total_comms,String inpath){
+	public void show_lines_queries(int total_comms,String inpath, MFile mf){
 		String comm = null;
-		double mo = 0.0;
+		float mo = (float)0.0;
 		total = 0;
 		String command = "git -C " + inpath + " log";
 		try{
@@ -206,41 +250,44 @@ public class Branche{
 	    					if((s2.startsWith("+") == true) || (s2.startsWith("-") == true))
 	    						total++;
 	    				}
-	    				stdInput2.close();
 					}
 				}
 	    	}
-	    	mo = ((double)total/total_commits);
-	    	System.out.printf("Changes->%.2f\n",mo);
-	    	stdInput.close();
+	    	mo = ((float)total/total_comms);
+	    	mf.set_avgLinesChanged(mo);
 	    }
 		catch(IOException e){
 	    	e.printStackTrace();
 		}
 	}
 
-	public void show_commit_queries(String inpath){
+	public void show_commit_queries(String inpath, MFile mf){
 		/*here are the total commtis in a var of the class*/
 		try{
+			String date = null;
 			CStats h = new CStats();
 			String final_aurthor = null;
 			String comm2 = null;
 			String temp_author = null;	
-			String command  = null;
-			/*HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEE*/
-			command = "git -C " + inpath + " rev-list --count --all";
-			Process proc8 = Runtime.getRuntime().exec(command);
-			/*to read the out put of gitcommand*/
-	    	BufferedReader stdInput8 = new BufferedReader(new InputStreamReader(proc8.getInputStream()));
-			/*BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));*/ 
-			String s8 = null;
-			s8 = stdInput8.readLine();
-			if(s8 != null)
-				total_commits = Integer.parseInt(s8);
-			System.out.println(total_commits);
-			stdInput8.close();
+			
+			String command  = "git -C " + inpath + " branch -r";
+			Process proc = Runtime.getRuntime().exec(command);
+	    	BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+			String s = null;
+			s = stdInput.readLine(); //go after the head//
+			while ((s = stdInput.readLine()) != null) {
+				command = "git -C " + inpath + " log " + s;
+				Process proc8 = Runtime.getRuntime().exec(command);
+	    		BufferedReader stdInput8 = new BufferedReader(new InputStreamReader(proc8.getInputStream()));
+				String s8 = null;
+				while ((s8 = stdInput8.readLine()) != null) {
+					if(s8.startsWith("commit") == true){
+						total_commits++;
+					}
+				}
+			}
 			System.out.println("Total commits ->"+total_commits);
-			/*Hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeee*/
+			mf.set_totalCommits(total_commits);
 			/*---------------------E2------------------------*/
 			command =  "git -C " + inpath + " log";
 	      	Process proc2 = Runtime.getRuntime().exec(command);
@@ -258,11 +305,11 @@ public class Branche{
 					}
 				}
 	   		}
-	   		/*Set<String> set = h.getNames() ;
+	   		Set<String> set = h.getNames() ;
 			for (String s3 : set) {
 				float perc = h.percen(s3);
-				System.out.println(s3 +" "+ perc*100+"%");
-			}*/
+				mf.insert_author(s3, perc*(float)100.0);
+			}
 			/*------------------------E3----------------------*/
 			command  = "git -C " + inpath + " branch -r";
 			CStats h2 = new CStats(); 
@@ -285,11 +332,11 @@ public class Branche{
 						count_commits++;
 					}
 				}
-				stdInput4.close();
 				/*remove the space*/
 				s4 = s4.replace(" ","");
-				/*TODO ------------------------------>*/double perc3 = (((double)count_commits/total_commits)*100.00);
-				System.out.println(s4 + " total commits -> " + perc3 + "%");
+				float perc3 = (((float)count_commits/total_commits)*(float)100.0);
+				mf.insert_branch2(s4,perc3);
+				
 				count_commits = 0;
 			/*---------------------E4-----------------------------*/
 				command =  "git -C " + inpath + " log";
@@ -306,25 +353,29 @@ public class Branche{
 							final_aurthor = s6.substring(comm2.length() + 1);
 							h2.insert(final_aurthor.replace(temp_author,""),1);
 						}
+						/*HERE CHANGED*/
+						/*----------GETS EACH TIME THE DATE-------------------*/
+						else if(s6.startsWith("Date:") == true){
+							date = s6.substring(8);
+							//System.out.println("S6----------------_>"+ date);
+						}
 					}
 		   		}
-		   		stdInput5.close();
 		   		System.out.println("------------------FOR THE BRNACH --------------------> "+ s4);
-		   		Set<String> set2 = h2.getNames() ;
+		   		Set<String> set2 = h2.getNames();
+		   		System.err.println(s4);
+				System.err.println(s4);
+		   		mf.createBranchFile(s4);
 				for (String s7 : set2) {
 					float perc2 = h2.percen(s7);
-					System.out.println(s7 +" "+ perc2*100+"%");
+					mf.branchFile_insert(s7, perc2*100);
+					System.out.println(s7 +" "+ perc2*(float)100.0+"%");
 				}
+				mf.branchFile_close();
 			}
-			stdInput2.close();
-			stdInput3.close();
 	    }
 	    catch(IOException e){
 	    	e.printStackTrace();
 	    }
-	}
-
-	public void mo_show_time(String inpath{
-		
 	}
 }
