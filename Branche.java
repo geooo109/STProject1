@@ -23,7 +23,7 @@ public class Branche{
 			/*BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));*/ 
 			String s = stdInput.readLine();
 			total_commits = Integer.parseInt(s);
-			//System.out.println("assssssssssssssssssssssssssssssssssssss");
+			System.out.println("assssssssssssssssssssssssssssssssssssss");
 		}
 		catch(IOException e){
 			e.printStackTrace();
@@ -51,8 +51,6 @@ public class Branche{
 			/*BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));*/ 
 			String s = null;
 			while ((s = stdInput.readLine()) != null) {
-				if(s.startsWith("  origin/HEAD -> origin/master") == true)
-					continue;
 				array[0] = s;
 				count = 0;
 				command = "git -C " + inpath + " log  --pretty=oneline " + s; 
@@ -107,9 +105,8 @@ public class Branche{
 			Process procf = Runtime.getRuntime().exec(command);
 			BufferedReader stdInputf = new BufferedReader(new InputStreamReader(procf.getInputStream()));
 	      	String sf = null;
+	      	sf = stdInputf.readLine();
 	     	while((sf = stdInputf.readLine()) != null){
-	     		if(sf.startsWith("  origin/HEAD -> origin/master") == true)
-					continue;
 	      		command = "git -C " + inpath + " log" + sf;
 	      		sf = sf.substring(2);
 	      		HFile hf = new HFile(sf.replace('/','-')+"tab.html", sf, outpath);
@@ -194,13 +191,18 @@ public class Branche{
 												
 												vector[4] = "";
 												hf.insert(vector);
+												vector[1] = null;
 												break;
 											}
 											if(s2.isEmpty() == true)
 												continue;
 
-											
-											vector[1] = s2;
+											if(vector[1] == null){
+												vector[1] = s2;
+											}
+											else{
+												vector[1] = vector[1] + "." + s2;
+											}
 										}
 										
 									}
@@ -274,9 +276,8 @@ public class Branche{
 			Process proc = Runtime.getRuntime().exec(command);
 	    	BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
 			String s = null;
+			s = stdInput.readLine(); //go after the head//
 			while ((s = stdInput.readLine()) != null) {
-				if(s.startsWith("  origin/HEAD -> origin/master") == true)
-					continue;
 				command = "git -C " + inpath + " log " + s;
 				Process proc8 = Runtime.getRuntime().exec(command);
 	    		BufferedReader stdInput8 = new BufferedReader(new InputStreamReader(proc8.getInputStream()));
@@ -334,9 +335,8 @@ public class Branche{
 	    	BufferedReader stdInput3 = new BufferedReader(new InputStreamReader(proc3.getInputStream()));
 			/*BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));*/ 
 			String s4 = null;
+			s4 = stdInput3.readLine(); //go after the head//
 			while ((s4 = stdInput3.readLine()) != null) {
-				if(s4.startsWith("  origin/HEAD -> origin/master") == true)
-					continue;
 				command = "git -C " + inpath + " log " + s4;
 				Process proc4 = Runtime.getRuntime().exec(command);
 				/*to read the out put of gitcommand*/
