@@ -196,12 +196,8 @@ public class Branche{
 											if(s2.isEmpty() == true)
 												continue;
 
-											if(vector[1] == null){
-												vector[1] = s2;
-											}
-											else{
-												vector[1] = vector[1] + "\n" + s2;
-											}
+											
+											vector[1] = s2;
 										}
 										
 									}
