@@ -56,6 +56,7 @@ public class Btc{
 			/*while ((s = stdError.readLine()) != null) {
 			    System.out.println(s);
 			}*/
+			stdInput.close();
 		}
 		catch(IOException e){
   			e.printStackTrace();
@@ -80,6 +81,7 @@ public class Btc{
 			/*while ((s = stdError.readLine()) != null) {
 			    System.out.println(s);
 			}*/
+			stdInput.close();
 		}
 		catch(IOException e){
   			e.printStackTrace();
@@ -98,7 +100,7 @@ public class Btc{
 			while ((s = stdInput.readLine()) != null) {
 		    	comms++;
 			}
-
+			stdInput.close();
 			/*while ((s = stdError.readLine()) != null) {
 			    System.out.println(s);
 			}*/
