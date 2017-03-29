@@ -117,6 +117,7 @@ public class Parse_Input{
         /*for g*/
         bra.show_lines_queries(b.get_comms(),inpath,mf);
  		//bra.ptr_total_commits(inpath);
- 		bra.show_commit_queries(inpath);
+ 		bra.show_commit_queries(inpath, mf);
+ 		mf.end();
     }
 }
