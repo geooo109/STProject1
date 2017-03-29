@@ -245,19 +245,16 @@ public class Branche{
 			String final_aurthor = null;
 			String comm2 = null;
 			String temp_author = null;	
+			
 			String command  = "git -C " + inpath + " branch -r";
 			Process proc = Runtime.getRuntime().exec(command);
-			/*to read the out put of gitcommand*/
 	    	BufferedReader stdInput = new BufferedReader(new InputStreamReader(proc.getInputStream()));
-			/*BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));*/ 
 			String s = null;
 			s = stdInput.readLine(); //go after the head//
 			while ((s = stdInput.readLine()) != null) {
 				command = "git -C " + inpath + " log " + s;
 				Process proc8 = Runtime.getRuntime().exec(command);
-				/*to read the out put of gitcommand*/
 	    		BufferedReader stdInput8 = new BufferedReader(new InputStreamReader(proc8.getInputStream()));
-				/*BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));*/ 
 				String s8 = null;
 				while ((s8 = stdInput8.readLine()) != null) {
 					if(s8.startsWith("commit") == true){
@@ -287,7 +284,7 @@ public class Branche{
 	   		Set<String> set = h.getNames() ;
 			for (String s3 : set) {
 				float perc = h.percen(s3);
-				mf.insert_author(s3, perc*100);
+				mf.insert_author(s3, perc*(float)100.0);
 			}
 			/*------------------------E3----------------------*/
 			command  = "git -C " + inpath + " branch -r";
@@ -313,7 +310,7 @@ public class Branche{
 				}
 				/*remove the space*/
 				s4 = s4.replace(" ","");
-				float perc3 = (((float)count_commits/total_commits)*100);
+				float perc3 = (((float)count_commits/total_commits)*(float)100.0);
 				mf.insert_branch2(s4,perc3);
 				
 				count_commits = 0;
@@ -341,8 +338,8 @@ public class Branche{
 		   		mf.createBranchFile(s4);
 				for (String s7 : set2) {
 					float perc2 = h2.percen(s7);
-					mf.branchFile_insert(s7, perc2);
-					System.out.println(s7 +" "+ perc2*100+"%");
+					mf.branchFile_insert(s7, perc2*100);
+					System.out.println(s7 +" "+ perc2*(float)100.0+"%");
 				}
 				mf.branchFile_close();
 			}
