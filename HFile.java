@@ -76,8 +76,7 @@ public class HFile {
 	{
 		try {
 			this.file.write("<tr><td>" + info[0]+"</td><td>" + info[1]
-			+ "</td><td>"+ info[2]+ "</td><td>"+ info[3]+ "</td></tr>");
-			System.err.println("Ok!");
+			+ "</td><td>"+ info[2]+ "</td><td>"+ info[4]+ "</td><td>"+info[3]+"</td></tr>");
 		}catch (IOException x) {
 			System.err.format("IOException: %s%n", x);
 			return -1;
@@ -108,7 +107,7 @@ public class HFile {
 
 
 	private static final String table_initialiser = 
-"<table style=\"width:100%\"><tr><th>Id</th><th>Author</th><th>Date</th> <th>Message</th></tr>";
+"<table style=\"width:100%\"><tr><th>Id</th><th>Message</th><th>Date</th> <th>Tags</th><th>Author</th></tr>";
 	private static final String html_initialiser = 
 "<!DOCTYPE html><html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"mystyle.css\"></head>";
 	

@@ -96,7 +96,7 @@ public class MFile {
 			this.bfile = Files.newBufferedWriter(Paths.get(n+"prc.html"), charset);
 			this.bfile.write(html_initialiser);
 			this.bfile.write("<h1>Branch: "+name+"</h1>");
-			this.bfile.write(aut_table_initialiser);
+			this.bfile.write(aut_table_initialiser_simple);
 		} catch (IOException x) {
 			System.err.format("create:IOException: %s%n", x);
 			return -1;
@@ -146,9 +146,10 @@ public class MFile {
 		return 0;
 	}
 
-	public int insert_author(String name,float perc)
+	public int insert_author(String name,float perc, int perday, int perweek, int permonth)
 	{
-		author_table.addElement("<tr><td>"+name+"</td><td>"+perc+"</td></tr>");
+		author_table.addElement("<tr><td>"+name+"</td><td>"+perc+"</td><td>"
+			+perday+"</td><td>"+perweek+"</td><td>"+permonth+"</td></tr>");
 		return 0;
 	}
 
@@ -170,7 +171,7 @@ public class MFile {
 
 
 	public int set_totalBranches(int val)
-	{	this.totalBranches = val;
+	{	this.totalBranches = val-1;
 		return 0;}
 
 	public int set_totalTags(int val)
@@ -197,6 +198,12 @@ public class MFile {
 			this.file = Files.newBufferedWriter(Paths.get(name), charset);
 			//TODO , add the rest of the info
 			this.file.write(html_initialiser);
+			this.file.write("<table><tr><td>Total Lines:"+this.totalLines
+			+"</td><td>Total Files:"+this.totalFiles+"</td><td>Total Tags:"+this.totalTags+
+			"</td></tr><tr><td>Total Committers "+this.totalCommitters +"</td><td> Avg Lines Changed:"+
+			this.avgLinesChanged+"</td><td>Total Commits:"+this.totalCommits+
+			"</td></tr><tr><td>Number of Branches:" +this.totalBranches +"</td></tr></table>"
+			);
 			this.file.write("<h1>Branches Info</h1>");
 			for (int i=0; i < branch_table.size(); i++)
 				this.file.write(branch_table.get(i));
@@ -234,6 +241,9 @@ public class MFile {
 	private static final String branch_table_initialiser = 
 "<table style=\"width:100%\"><tr><th>Branch</th><th>Created</th><th>Last update</th><th>Log</th></tr>";
 	private static final String aut_table_initialiser = 
+"<table style=\"width:100%\"><tr><th>Author</th><th>Percentage</th><th>Com/Day</th><th>Com/Week</th><th>Com/Month</th></tr>";
+	private static final String aut_table_initialiser_simple =
 "<table style=\"width:100%\"><tr><th>Author</th><th>Percentage</th></tr>";
+
 
 }
