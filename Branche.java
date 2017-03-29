@@ -166,12 +166,12 @@ public class Branche{
 											tempInput2 = stdInput2;
 											temp_s = tempInput2.readLine();
 											if(temp_s == null){
-												System.out.println("------------------------START---------------------");
-												System.out.println("------------------>" + vector[0] + "<----------------------");
-												System.out.println(vector[1]);
-												System.out.println(vector[2]);
-												System.out.println(vector[3]);
-												System.out.println("------------------------END-----------------------");
+											//	System.out.println("------------------------START---------------------");
+											//	System.out.println("------------------>" + vector[0] + "<----------------------");
+											//	System.out.println(vector[1]);
+											//	System.out.println(vector[2]);
+											//	System.out.println(vector[3]);
+											//	System.out.println("------------------------END-----------------------");
 												hf.insert(vector);
 												break;
 											}
