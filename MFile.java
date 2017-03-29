@@ -52,7 +52,7 @@ public class MFile {
 	int totalBranches;
 	int totalTags;
 	int totalCommitters;
-	int totalLinesChanged;
+	float avgLinesChanged;
 	int totalCommits;
 
 
@@ -61,7 +61,7 @@ public class MFile {
 		this.branch_table = new Vector<String>();
 		this.branch2_table = new Vector<String>();
 		this.author_table = new Vector<String>();
-		bfile = null;
+		this.bfile = null;
 		this.retlink = "<p class =\"sansserif\"><a href = \""+name+"\"> Back </a></p>";
 
 		//Maybe excludes the following 2 lines
@@ -75,28 +75,30 @@ public class MFile {
 		this.totalBranches = -1;
 		this.totalTags = -1;
 		this.totalCommitters = -1;
-		this.totalLinesChanged = -1;
+		this.avgLinesChanged = (float)-1.0;
 		this.totalCommits = -1;
 
 
-		file = null;
+		this.file = null;
 	}
 
 	public int createBranchFile(String name)
 	{
-		Charset charset = Charset.forName("US-ASCII");
+		System.err.println("debug >>> Name is "+name);
+		Charset charset = Charset.forName("UTF-8");
 		if (this.bfile != null) {
 			System.err.println("Attempted to open file before closing last!\n");
 			return -1;
 		}
 
+		String n = name.replace('/', '-');
 		try {
-			this.bfile = Files.newBufferedWriter(Paths.get(name+"prc.html"), charset);
+			this.bfile = Files.newBufferedWriter(Paths.get(n+"prc.html"), charset);
 			this.bfile.write(html_initialiser);
 			this.bfile.write("<h1>Branch: "+name+"</h1>");
 			this.bfile.write(aut_table_initialiser);
 		} catch (IOException x) {
-			System.err.format("IOException: %s%n", x);
+			System.err.format("create:IOException: %s%n", x);
 			return -1;
 		}
 		return 0;
@@ -109,7 +111,7 @@ public class MFile {
 		try {
 			this.bfile.write("<tr><td>"+name+"</td><td>"+perc+"</td></tr>");
 		} catch (IOException x) {
-			System.err.format("IOException: %s%n", x);
+			System.err.format("Insert:IOException: %s%n", x);
 			return -1;
 
 		}
@@ -119,15 +121,17 @@ public class MFile {
 
 	public int branchFile_close()
 	{
-		if (bfile == null)
+		if (this.bfile == null) {
+			System.err.println("Error detected");
 			return -1;
+		}
 		try {
 			this.bfile.write("</table>");
 			this.bfile.write(retlink);
 			this.bfile.write("</html>");
 			this.bfile.close();
 		} catch (IOException x) {
-			System.err.format("IOException: %s%n", x);
+			System.err.format("close:IOException: %s%n", x);
 			return -1;
 
 		}
@@ -138,7 +142,7 @@ public class MFile {
 	public int insert_branch2(String name, float perc)
 	{
 		branch2_table.addElement("<tr><td>"+name+"</td><td>"+perc+
-			"</td><td><a href=\""+name+"prc.html\">Link</a></td></tr>");
+			"</td><td><a href=\""+name.replace('/', '-')+"prc.html\">Link</a></td></tr>");
 		return 0;
 	}
 
@@ -151,7 +155,7 @@ public class MFile {
 	public int insert_branch(String name,String sdate, String edate,
 		String filename)
 	{
-		author_table.addElement("<tr><td>"+name+"</td><td>"
+		branch_table.addElement("<tr><td>"+name+"</td><td>"
 		+sdate+"</td><td>"+edate+"</td><td><a href= \""+filename+"\">Log</a></td></tr>");
 		return 0;
 	}
@@ -177,8 +181,8 @@ public class MFile {
 	{	this.totalCommitters = val;
 		return 0;}
 
-	public int set_totalLinesChanged(int val)
-	{	this.totalLinesChanged = val;
+	public int set_avgLinesChanged(float val)
+	{	this.avgLinesChanged = val;
 		return 0;}
 
 	public int set_totalCommits(int val)
@@ -188,7 +192,7 @@ public class MFile {
 	/*finalizing function */
 	public int end()
 	{
-		Charset charset = Charset.forName("US-ASCII");
+		Charset charset = Charset.forName("UTF-8");
 		try {
 			this.file = Files.newBufferedWriter(Paths.get(name), charset);
 			//TODO , add the rest of the info
@@ -225,7 +229,7 @@ public class MFile {
 	private static final String html_initialiser = 
 "<!DOCTYPE html><html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"mystyle.css\"></head>";
 	private static final String branch2_table_init = 
-"<table style=\"width:100%\"><tr><th>Branch</th><th>Link</th></tr>";
+"<table style=\"width:100%\"><tr><th>Branch</th><th>Percentage</th><th>Link</th></tr>";
 
 	private static final String branch_table_initialiser = 
 "<table style=\"width:100%\"><tr><th>Branch</th><th>Created</th><th>Last update</th><th>Log</th></tr>";

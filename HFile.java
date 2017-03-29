@@ -44,7 +44,7 @@ public class HFile {
 		//We we're suppossed to import the html file
 		//TODO
 
-		Charset charset = Charset.forName("US-ASCII");
+		Charset charset = Charset.forName("UTF-8");
 
 		BufferedWriter file;
 
@@ -77,6 +77,7 @@ public class HFile {
 		try {
 			this.file.write("<tr><td>" + info[0]+"</td><td>" + info[1]
 			+ "</td><td>"+ info[2]+ "</td><td>"+ info[3]+ "</td></tr>");
+			System.err.println("Ok!");
 		}catch (IOException x) {
 			System.err.format("IOException: %s%n", x);
 			return -1;

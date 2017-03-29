@@ -111,6 +111,6 @@ public class Btc{
 	public void print_btc(MFile mf){
 		mf.set_totalBranches(brs);
 		mf.set_totalTags(tags);
-		mf.set_totalCommitters(comms)
+		mf.set_totalCommitters(comms);
 	}
 }
