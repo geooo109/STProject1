@@ -77,7 +77,6 @@ public class Branche{
 							count = 1;
 						}
 					}
-					stdInput3.close();
 				}
 				comm = "Date:";
 				if(last != null)
@@ -91,7 +90,6 @@ public class Branche{
 			/*while ((s = stdError.readLine()) != null) {
 			    System.out.println(s);
 			}*/
-			stdInput.close();
 		}
 		catch(IOException e){
   			e.printStackTrace();
@@ -169,9 +167,9 @@ public class Branche{
 											tempInput2 = stdInput2;
 											temp_s = tempInput2.readLine();
 											if(temp_s == null){
-												/*HERE IS THE CHANGE FOR THE TAG*/
-												/*System.out.println(vector[0]);
-												command = "git -C " + inpath + " tag --contains " + vector[0];
+
+												//System.out.println(vector[0]);
+												/*command = "git -C " + inpath + " tag --contains " + vector[0];
 												Process proc3 = Runtime.getRuntime().exec(command);
 												BufferedReader stdInput3 = new BufferedReader(new InputStreamReader(proc3.getInputStream()));
 												String s3 = null;
@@ -189,7 +187,9 @@ public class Branche{
 											//	System.out.println(vector[3]);
 											//	System.out.println("------------------------END-----------------------");
 												//if(vector[4] != null)
-												//	System.out.println(vector[4]);
+												//	System.out.println(vector[4]);-----------------------END-----------------------");
+												
+												vector[4] = "";
 												hf.insert(vector);
 												break;
 											}
@@ -252,13 +252,11 @@ public class Branche{
 	    					if((s2.startsWith("+") == true) || (s2.startsWith("-") == true))
 	    						total++;
 	    				}
-	    				stdInput2.close();
 					}
 				}
 	    	}
 	    	mo = ((float)total/total_comms);
 	    	mf.set_avgLinesChanged(mo);
-	    	stdInput.close();
 	    }
 		catch(IOException e){
 	    	e.printStackTrace();
@@ -268,7 +266,6 @@ public class Branche{
 	public void show_commit_queries(String inpath, MFile mf){
 		/*here are the total commtis in a var of the class*/
 		try{
-			String date = null;
 			CStats h = new CStats();
 			String final_aurthor = null;
 			String comm2 = null;
@@ -289,9 +286,7 @@ public class Branche{
 						total_commits++;
 					}
 				}
-				stdInput8.close();
 			}
-			stdInput.close();
 			System.out.println("Total commits ->"+total_commits);
 			mf.set_totalCommits(total_commits);
 			/*---------------------E2------------------------*/
@@ -300,6 +295,8 @@ public class Branche{
 	      	/*to read the out put of gitcommand*/
 	    	BufferedReader stdInput2 = new BufferedReader(new InputStreamReader(proc2.getInputStream()));	
 	    	String s2 = null;
+	    	Commstat coms = new Commstat();
+	    	String tmp = "";
 	    	while ((s2 = stdInput2.readLine()) != null) {
 	    		if(s2.isEmpty() == false){
 		    		comm2 = s2.substring(0, s2.indexOf(" "));			
@@ -308,13 +305,25 @@ public class Branche{
 						temp_author = s2.substring(s2.lastIndexOf("<") - 1);
 						final_aurthor = s2.substring(comm2.length() + 1);
 						h.insert(final_aurthor.replace(temp_author,""),1);
+						tmp = final_aurthor.replace(temp_author,"");
+
+					}
+					else if(s2.startsWith("Date:") == true){
+						String date = s2.substring(8);
+						coms.insert(tmp,date);
 					}
 				}
 	   		}
 	   		Set<String> set = h.getNames() ;
 			for (String s3 : set) {
 				float perc = h.percen(s3);
-				mf.insert_author(s3, perc*(float)100.0);
+				int total = h.sum(s3);
+				ArrayList<Integer> list = coms.totals(s3);
+				if (list == null)
+					mf.insert_author(s3, perc*(float)100.0, 0,0,0);
+				else
+				mf.insert_author(s3, perc*(float)100.0, total/list.get(0), 
+					total/list.get(1), total/list.get(2));
 			}
 			/*------------------------E3----------------------*/
 			command  = "git -C " + inpath + " branch -r";
@@ -342,7 +351,7 @@ public class Branche{
 				s4 = s4.replace(" ","");
 				float perc3 = (((float)count_commits/total_commits)*(float)100.0);
 				mf.insert_branch2(s4,perc3);
-				stdInput4.close();
+				
 				count_commits = 0;
 			/*---------------------E4-----------------------------*/
 				command =  "git -C " + inpath + " log";
@@ -359,12 +368,6 @@ public class Branche{
 							final_aurthor = s6.substring(comm2.length() + 1);
 							h2.insert(final_aurthor.replace(temp_author,""),1);
 						}
-						/*HERE CHANGED*/
-						/*----------GETS EACH TIME THE DATE-------------------*/
-						else if(s6.startsWith("Date:") == true){
-							date = s6.substring(8);
-							//System.out.println("S6----------------_>"+ date);
-						}
 					}
 		   		}
 		   		System.out.println("------------------FOR THE BRNACH --------------------> "+ s4);
@@ -377,8 +380,6 @@ public class Branche{
 					mf.branchFile_insert(s7, perc2*100);
 					System.out.println(s7 +" "+ perc2*(float)100.0+"%");
 				}
-				stdInput2.close();
-				stdInput3.close();
 				mf.branchFile_close();
 			}
 	    }
