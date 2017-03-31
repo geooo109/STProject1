@@ -1,6 +1,6 @@
 import java.util.*;
 import java.io.*;
-
+import java.lang.Object;
 public class Branche{
 	private int total;
 	private int total_commits;
@@ -39,11 +39,31 @@ public class Branche{
 	public void show_branches(String inpath, MFile mf){
 		String comm = null;
 		int flag = 0;
+		int place = 0;
 		int count;
+		String temp4 = null;
+		String copyid = null;
+		HashSet<String> hset = new HashSet<String>(); //create the hashset
 		String commit = null;
+		int count2 = 0;
+		String comm2 = null;
+		String s33 = null;
 		String [] array = new String [4];
 		String command  = "git -C " + inpath + " branch -r";
+		String command2 = "git -C " + inpath + " log  --pretty=oneline origin/master";
 		try{
+			Process procb = Runtime.getRuntime().exec(command2);
+			/*to read the out put of gitcommand*/
+	    	BufferedReader stdInputb = new BufferedReader(new InputStreamReader(procb.getInputStream()));
+			/*BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));*/ 
+			String sb = null;
+			while ((sb = stdInputb.readLine()) != null) {
+				place = sb.indexOf(" ");
+				copyid = sb.substring(0,place);
+				//System.out.println("cccc--->" + copyid);
+				hset.add(copyid);
+			}
+
 	      	Process proc = Runtime.getRuntime().exec(command);
 	      	
 	      	/*to read the out put of gitcommand*/
@@ -55,6 +75,7 @@ public class Branche{
 					continue;
 				array[0] = s;
 				count = 0;
+				count2 = 0;
 				command = "git -C " + inpath + " log  --pretty=oneline " + s; 
 		    	Process proc2 = Runtime.getRuntime().exec(command);
 	      	
@@ -64,25 +85,51 @@ public class Branche{
 				/*BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));*/ 
 				String s2 = null;
 				String last = null;
+				String clast = null;
 				while ((s2 = stdInput2.readLine()) != null) {
 					String [] temp_s2 = s2.split(" ");
 					command = "git -C " + inpath + " show --summary " + temp_s2[0];
+					//System.out.println(command);
 	      			Process proc3 = Runtime.getRuntime().exec(command);
 	    			BufferedReader stdInput3 = new BufferedReader(new InputStreamReader(proc3.getInputStream()));
 					String s3 = null;
 					while ((s3 = stdInput3.readLine()) != null && s3.isEmpty() == false) {
-						comm = s3.substring(0, s3.indexOf(" "));
-						if(s3.startsWith("Date:") == true)
-							last = s3;
+						/*if(s3.startsWith("commit") == true){
+							temp4 = s3.substring(0, s3.indexOf(" "));
+							comm2 = s3.substring(temp4.length()+1);
+							//System.out.println(comm2);
+						}*/
+						if(s3.startsWith("Date:") == true){
+							if(s.equals("  origin/master") == true){
+								count2 = -1;
+								last = s3;
+							}
+							else{
+								if(hset.contains(temp_s2[0]) == false){
+									count2++;
+									last = s3;
+								}
+							}
+							clast = s3;
+						}
+						
 						if(count == 0 && s3.startsWith("Date:") == true){
+							comm = s3.substring(0, s3.indexOf(" "));
 							array[2] =  s3.substring(comm.length() + 3);
+							System.out.println(s + array[2]);
 							count = 1;
 						}
 					}
 				}
 				comm = "Date:";
-				if(last != null)
+				if(last != null){
 					array[1] =  last.substring(comm.length() + 3);
+				}
+				else{
+					if(count2 == 0)
+						array[1] =  clast.substring(comm.length() + 3);
+				}
+
 				if(array[1] !=null) {
 					array[3] = new String(array[0]+"tab.html");
 					mf.insert_branch(array[0], array[1], array[2], array[3].replace('/', '-'));
