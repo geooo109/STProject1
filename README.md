@@ -1,6 +1,6 @@
 # STProject1
-Software technology course ,first assignment
 
+API that takes information from github,calculates some statistics and presents them on the web
 
 Authors:
 Georgios Michas    ~sdi1400109 
